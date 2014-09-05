@@ -1,0 +1,23 @@
+{
+  "name": "tw-realtime-wordcloud-crawler",
+  "version": "1.0.0",
+  "description": "tw-realtime-wordcloud-crawler =============================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LesTR/tw-realtime-wordcloud-crawler.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LesTR/tw-realtime-wordcloud-crawler/issues"
+  },
+  "homepage": "https://github.com/LesTR/tw-realtime-wordcloud-crawler",
+  "dependencies": {
+    "cson-config": "^0.1.9",
+    "node-tweet-stream": "^1.4.0"
+  }
+}
