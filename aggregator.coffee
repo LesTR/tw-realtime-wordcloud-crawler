@@ -12,6 +12,7 @@ counts = {}
 setInterval ->
 	sorted = Object.keys counts
 	sorted.sort (a, b) -> counts[b] - counts[a]
+	return unless sorted.length
 	o = {}
 	for i in sorted[0..50]
 		o[i] = counts[i]
