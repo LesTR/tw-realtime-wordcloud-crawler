@@ -5,6 +5,6 @@ twitter:
 	token_secret: process.env.SECRET or "HTgUWCKvVa4X39kX3i2BkBBZyqsDGyGyAjx9CNd5rbn96"
 zookeeper:
 	hosts: ["192.168.218.53:2181"]
-	wordcloudRoot: "/wordcloud"
+	root: "/wordcloud"
 kafka:
 	zookeeper: "192.168.218.53:2181/kafka0.8"

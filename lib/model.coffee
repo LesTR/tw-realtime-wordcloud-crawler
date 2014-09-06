@@ -54,11 +54,7 @@ module.exports.publishTweet = (keyword, tweet, cb)->
 
 createZKstructures = (params,cb)->
 
-	paths = [
-		"#{params.zookeeper.wordcloudRoot}",
-		"#{params.zookeeper.wordcloudRoot}/keywords",
-		"#{params.zookeeper.wordcloudRoot}/crawlers",
-	]
+	paths = ["/keywords", "/crawlers"]
 
 	async.eachSeries paths, (path, next)->
 		zk.exists path, (err, exists)->
