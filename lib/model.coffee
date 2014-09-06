@@ -3,16 +3,20 @@ ZK = require 'zkjs'
 async = require 'async'
 kafka = require 'kafka-node'
 colors = require 'colors'
+Twitter = require 'node-tweet-stream'
 
 initialized = no
 zk = null
 kafkaClient = null
 kafkaProducer = null
-tw = null
 actualKeywords = {}
-module.exports.init = (params,t,cb)->
+config = null
+
+allStreams = {}
+
+module.exports.start = (params,cb)->
 	debug "keywords init"
-	tw = t
+	config = params
 	zk = new ZK params.zookeeper
 	async.parallel [
 		(next)->
@@ -39,39 +43,29 @@ module.exports.init = (params,t,cb)->
 		debug "Initialization completed"
 		cb err if cb
 
-module.exports.myKeywords = (cb)->
-	debug "call myKewords"
-	refreshKeywords	cb
 
 refreshKeywords = (cb)->
 	debug "refreshing keywords"
-	x = []
-	zk.getChildren "/keywords",updateKeywords, (err, keywords, zstat)->
-		async.eachLimit keywords, 10, (keyword, next)->
-			debug "getting data for keyword #{keyword}"
-			zk.get "/keywords/#{keyword}", null, (err, value, zstat)->
+	x = {}
+	zk.getChildren "/keywords",updateKeywords, (err, streams, zstat)->
+		async.eachLimit streams, 10, (stream, next)->
+			debug "getting data for stream #{stream}"
+			zk.get "/keywords/#{stream}", null, (err, value, zstat)->
 				return next err if err
 				try
 					d = JSON.parse value.toString()
 				catch e
 					return next e
-				for i in d.keywords
-					x.push i
+				x[d.topic] = d
 				next()
 		,(err)->
 			return cb err if err
-			y = {}
-			for k in keywords
-				x.push k
-				if actualKeywords[k]
-					delete actualKeywords[k]
+			running = []
+			for topic,s of x
+				if allStreams[s.topic]
+					running.push s.topic
 				else
-					trackKeyword k
-					y[k] = yes
-
-			for k of actualKeywords
-				untrackKeyword k
-			actualKeywords = y
+					trackKeyword s
 
 			return cb(null,x)
 
@@ -84,24 +78,54 @@ updateKeywords = (info)->
 
 
 
-trackKeyword = (keyword)->
-	debug "trackKeyword #{keyword}"
-	tw.track keyword
+trackKeyword = (keywordStructure)->
+	debug "trackKeyword #{keywordStructure.topic}"
+	c =
+		consumer_key: config.twitter.consumer_key
+		consumer_secret: config.twitter.consumer_secret
+		token: keywordStructure.token
+		token_secret: keywordStructure.secret
 
-module.exports.trackKeyword = trackKeyword
-untrackKeyword = (keyword)->
-	debug "untrackKeyword #{keyword}"
-	tw.untrack keyword
-module.exports.untrackKeyword = untrackKeyword
-module.exports.publishTweet = (tweet, cb)->
+	s = new Twitter c
+
+	s.on 'tweet', (tweet)=>
+		t =
+			id: tweet.id_str
+			text: tweet.text
+			user:
+				id: tweet.user.id_str
+				description: tweet.user.description
+				screenname: tweet.user.screen_name
+			lang: tweet.lang
+			entities: tweet.entities
+			timestamp: tweet.timestamp_ms
+			source: tweet.source
+
+		publishTweet keywordStructure, t, ()->
+
+	for k in keywordStructure.keywords
+		s.track k
+	allStreams[keywordStructure.topic] = s
+
+untrackKeyword = (stream)->
+	debug "untrackKeyword #{stream.topic}"
+	s = allStreams[stream.topic]
+	for k in stream.keywords
+		s.untrack k
+	delete allStreams[stream.topic]
+
+
+
+publishTweet = (keywordStructure, tweet, cb)->
 
 	debug "publishTweet with id: #{tweet.id}"
 	m =
 		id: 8
+		topic: keywordStructure.topic
 		tweet: tweet
 	message = JSON.stringify m
 	kafkaProducer.send [
-		{topic: "mrdka", messages:[message], partition: 0}
+		{topic: "aggregator", messages:[message], partition: 0}
 	],(err, data)->
 		cb(err)
 
