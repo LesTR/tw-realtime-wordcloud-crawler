@@ -35,17 +35,17 @@ module.exports.init = (params,cb)->
 
 module.exports.myKewords = ()->
 	debug "call myKewords"
+	return ["bieber","whereismike"]
 module.exports.trackKeyword = (keyword)->
 	debug "trackKeyword", arguments
 module.exports.untrackKeyword = (keyword)->
 	debug "untrackKeyword", arguments
 
-module.exports.publishTweet = (keyword, tweet, cb)->
+module.exports.publishTweet = (tweet, cb)->
 
-	debug "publishTweet for keyword: #{keyword}"
+	debug "publishTweet with id: #{tweet.id}"
 	m =
 		id: 8
-		keyword: keyword
 		tweet: tweet
 	message = JSON.stringify m
 	kafkaProducer.send [
@@ -68,6 +68,6 @@ createZKstructures = (params,cb)->
 				return next err
 	,(err)->
 		return cb err if err
-		return cb()
 		#create my ephemeral node
-		zk.create
+		zk.create "/crawlers/node", "", ZK.create.EPHEMERAL_SEQUENCE, (err,path)->
+			cb err

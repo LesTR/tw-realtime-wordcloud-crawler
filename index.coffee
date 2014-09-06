@@ -24,18 +24,14 @@ tw.on 'tweet', (tweet)=>
 		timestamp: tweet.timestamp_ms
 		source: tweet.source
 
-	for k in keywords
-		if t.text.toLowerCase().indexOf(k.toLowerCase()) isnt -1
-			model.publishTweet k,t, ()->
+	model.publishTweet t, ()->
 
 tw.on 'error', (error)->
 	console.log "ERROR pYco!".red, error
 
 
 
-keywords = ["bieber","whereismike"]
 
 model.init config, ()=>
-	for keyword in keywords
-
+	for keyword in model.myKewords()
 		tw.track keyword
