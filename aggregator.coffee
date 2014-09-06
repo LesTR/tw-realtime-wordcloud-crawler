@@ -24,6 +24,7 @@ processMessage = (message) ->
 		tweet = JSON.parse(message.value).tweet.text
 		words = tweet.split(" ").filter (v) -> v.length > 2 and v not of stopwords
 		for word in words
+			word = word.toLowerCase()
 			counts[word] ?= 0
 			counts[word]++
 	catch e
