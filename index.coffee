@@ -27,6 +27,4 @@ tw.on 'error', (error)->
 	console.log "ERROR pYco!".red, error
 
 
-model.init config, ()=>
-	for keyword in model.myKewords()
-		tw.track keyword
+model.init config, tw

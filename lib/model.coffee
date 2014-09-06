@@ -1,4 +1,4 @@
-debug = require('debug')('keywords')
+debug = require('debug')('model')
 ZK = require 'zkjs'
 async = require 'async'
 kafka = require 'kafka-node'
@@ -8,9 +8,11 @@ initialized = no
 zk = null
 kafkaClient = null
 kafkaProducer = null
-
-module.exports.init = (params,cb)->
+tw = null
+actualKeywords = {}
+module.exports.init = (params,t,cb)->
 	debug "keywords init"
+	tw = t
 	zk = new ZK params.zookeeper
 	async.parallel [
 		(next)->
@@ -28,27 +30,55 @@ module.exports.init = (params,cb)->
 			kafkaProducer = new kafka.Producer kafkaClient
 
 			kafkaProducer.on 'error', (err)->
-				console.log arguments
+				console.log "Kafka ERROR pYco: ".red, err
 
 			kafkaProducer.on 'ready', ()->
 				debug "Kafka producer ready"
 				next()
 	],(err)->
 		debug "Initialization completed"
-		cb err
+		cb err if cb
 
-module.exports.myKewords = ()->
+module.exports.myKeywords = (cb)->
 	debug "call myKewords"
-	a = ()->
-		console.log arguments
-	zk.getChildren "/keywords",a, (err, keywords, zstat)->
-		console.log arguments
-	return ["bieber","whereismike"]
-module.exports.trackKeyword = (keyword)->
-	debug "trackKeyword", arguments
-module.exports.untrackKeyword = (keyword)->
-	debug "untrackKeyword", arguments
+	refreshKeywords	cb
 
+refreshKeywords = (cb)->
+	debug "refreshing keywords"
+	zk.getChildren "/keywords",updateKeywords, (err, keywords, zstat)->
+		x = []
+		y = {}
+		for k in keywords
+			x.push k
+			if actualKeywords[k]
+				delete actualKeywords[k]
+			else
+				trackKeyword k
+				y[k] = yes
+
+		for k of actualKeywords
+			untrackKeyword k
+		actualKeywords = y
+
+		return cb(null,x)
+
+
+updateKeywords = (info)->
+	if info.path is "/keywords" and info.type is "child"
+		refreshKeywords (err, k)->
+			debug "keywords refreshed",k
+
+
+
+trackKeyword = (keyword)->
+	debug "trackKeyword #{keyword}"
+	tw.track keyword
+
+module.exports.trackKeyword = trackKeyword
+untrackKeyword = (keyword)->
+	debug "untrackKeyword #{keyword}"
+	tw.untrack keyword
+module.exports.untrackKeyword = untrackKeyword
 module.exports.publishTweet = (tweet, cb)->
 
 	debug "publishTweet with id: #{tweet.id}"
@@ -78,4 +108,4 @@ createZKstructures = (params,cb)->
 		return cb err if err
 		#create my ephemeral node
 		zk.create "/crawlers/node", "", ZK.create.EPHEMERAL_SEQUENCE, (err,path)->
-			cb err
+			refreshKeywords cb
