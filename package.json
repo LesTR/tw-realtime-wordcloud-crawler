@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/LesTR/tw-realtime-wordcloud-crawler",
   "dependencies": {
+    "colors": "^0.6.2",
     "cson-config": "^0.1.9",
     "node-tweet-stream": "^1.4.0",
     "prozess": "^0.7.2"

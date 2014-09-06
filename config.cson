@@ -1,5 +1,5 @@
 twitter:
-	consumer_key: "cDrDAXA086n8K1pMuSNx5jnF9"
-	consumer_secret: "EexZ6eMyxoyiAcIdoSqYQCknUlzIiJvvcWOOLQE04hnD2XIfYI"
-	token: "194596640-uneWfyjyQdZUNJueHGlFZY6aqkc8bGZ3drI3cyru"
-	token_secret: "feQ2fK0xV76V0x6Du6hr4LdX6Vte0WftZhh1qrMizRofC"
+	consumer_key: process.env.APPKEY or "cDrDAXA086n8K1pMuSNx5jnF9"
+	consumer_secret: process.env.APPSECRET or "EexZ6eMyxoyiAcIdoSqYQCknUlzIiJvvcWOOLQE04hnD2XIfYI"
+	token: process.env.TOKEN or "1651168194-L2i9M5XjpS8MP6jsasAWIdZmF9KHQsf5Tflx0Gz"
+	token_secret: process.env.SECRET or "HTgUWCKvVa4X39kX3i2BkBBZyqsDGyGyAjx9CNd5rbn96"
