@@ -74,7 +74,7 @@ updateKeywords = (info)->
 	console.log arguments
 	if info.path is "/keywords" and info.type is "child"
 		refreshKeywords (err, k)->
-			debug "keywords refreshed",k
+			debug "keywords refreshed"
 
 
 
@@ -125,6 +125,7 @@ publishTweet = (keywordStructure, tweet, cb)->
 	m =
 		id: 8
 		topic: keywordStructure.topic
+		keywords: keywordStructure.keywords
 		tweet: tweet
 	message = JSON.stringify m
 	kafkaProducer.send [

@@ -2,7 +2,7 @@ config = require("cson-config").load()
 kafka = require "kafka-node"
 kafkaClient = new kafka.Client config.kafka.zookeeper
 kafkaConsumer = new kafka.Consumer kafkaClient, [topic: "aggregator"]
-kafkaProducer= new kafka.Producer kafkaClient, [topic: "aggregator"]
+kafkaProducer= new kafka.Producer kafkaClient
 
 stopwords = {}
 stopwords[i] = yes for i in require "./stopwords.json"
@@ -22,7 +22,7 @@ setInterval ->
 			kafkaProducer.send [topic: topic, messages: [JSON.stringify o]], (e) ->
 				console.error e if e
 				delete items[i] for i in sorted[250..] if sorted.length > 500
-, 2000
+, 1000
 
 processMessage = (message) ->
 	try
@@ -33,9 +33,10 @@ processMessage = (message) ->
 		total[decoded.topic] ?= 0
 		total[decoded.topic]++
 		for word in words
-			word = word.toLowerCase()
-			counts[decoded.topic][word] ?= 0
-			counts[decoded.topic][word]++
+			word = word.toLowerCase().replace(/[,;:!.})(=-]/ig, "").trim()
+			if word.length > 2 and word not in decoded.keywords
+				counts[decoded.topic][word] ?= 0
+				counts[decoded.topic][word]++
 	catch e
 		console.error e
 
