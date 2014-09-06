@@ -44,6 +44,7 @@ module.exports.publishTweet = (keyword, tweet, cb)->
 
 	debug "publishTweet for keyword: #{keyword}"
 	m =
+		id: 8
 		keyword: keyword
 		tweet: tweet
 	message = JSON.stringify m
