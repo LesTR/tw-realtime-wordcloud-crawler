@@ -1,13 +1,15 @@
 require('cson-config').load()
 config = process.config
 colors = require 'colors'
+model = require './lib/model'
+
 
 Twitter = require 'node-tweet-stream'
 
 tw = new Twitter config.twitter
 
 publishTweet = (tweet, keyword)->
-	console.log keyword.green, JSON.stringify tweet
+	#console.log keyword.green, JSON.stringify tweet
 
 tw.on 'tweet', (tweet)=>
 	t =
@@ -24,7 +26,7 @@ tw.on 'tweet', (tweet)=>
 
 	for k in keywords
 		if t.text.toLowerCase().indexOf(k.toLowerCase()) isnt -1
-			publishTweet t,k
+			model.publishTweet k,t, ()->
 
 tw.on 'error', (error)->
 	console.log "ERROR pYco!".red, error
@@ -33,6 +35,7 @@ tw.on 'error', (error)->
 
 keywords = ["bieber","whereismike"]
 
-for keyword in keywords
+model.init config, ()=>
+	for keyword in keywords
 
-	tw.track keyword
+		tw.track keyword

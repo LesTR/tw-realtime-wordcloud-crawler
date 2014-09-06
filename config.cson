@@ -3,3 +3,8 @@ twitter:
 	consumer_secret: process.env.APPSECRET or "EexZ6eMyxoyiAcIdoSqYQCknUlzIiJvvcWOOLQE04hnD2XIfYI"
 	token: process.env.TOKEN or "1651168194-L2i9M5XjpS8MP6jsasAWIdZmF9KHQsf5Tflx0Gz"
 	token_secret: process.env.SECRET or "HTgUWCKvVa4X39kX3i2BkBBZyqsDGyGyAjx9CNd5rbn96"
+zookeeper:
+	hosts: ["192.168.218.53:2181"]
+	wordcloudRoot: "/wordcloud"
+kafka:
+	zookeeper: "192.168.218.53:2181/kafka0.8"
