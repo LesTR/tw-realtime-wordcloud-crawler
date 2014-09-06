@@ -88,7 +88,10 @@ trackKeyword = (keywordStructure)->
 
 	s = new Twitter c
 
-	s.on 'tweet', (tweet)=>
+	s.on 'error', (error)->
+		console.log "TW error pYco".red, error
+
+	s.on 'tweet', (tweet)->
 		t =
 			id: tweet.id_str
 			text: tweet.text
@@ -118,7 +121,7 @@ untrackKeyword = (stream)->
 
 publishTweet = (keywordStructure, tweet, cb)->
 
-	debug "publishTweet with id: #{tweet.id}"
+	debug "publishTweet for topic #{keywordStructure.topic} with id: #{tweet.id}"
 	m =
 		id: 8
 		topic: keywordStructure.topic
