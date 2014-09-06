@@ -8,9 +8,6 @@ Twitter = require 'node-tweet-stream'
 
 tw = new Twitter config.twitter
 
-publishTweet = (tweet, keyword)->
-	#console.log keyword.green, JSON.stringify tweet
-
 tw.on 'tweet', (tweet)=>
 	t =
 		id: tweet.id_str
@@ -28,8 +25,6 @@ tw.on 'tweet', (tweet)=>
 
 tw.on 'error', (error)->
 	console.log "ERROR pYco!".red, error
-
-
 
 
 model.init config, ()=>
