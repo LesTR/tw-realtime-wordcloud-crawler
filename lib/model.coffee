@@ -2,6 +2,7 @@ debug = require('debug')('keywords')
 ZK = require 'zkjs'
 async = require 'async'
 kafka = require 'kafka-node'
+colors = require 'colors'
 
 initialized = no
 zk = null
@@ -14,6 +15,9 @@ module.exports.init = (params,cb)->
 	async.parallel [
 		(next)->
 			debug "Initializing zookeeper"
+			zk.on 'expired', ()->
+				console.log "ZK session expired ... reconneting".red
+				zk.start()
 			zk.start (err)->
 				return next err if err
 				createZKstructures params, next
@@ -35,6 +39,10 @@ module.exports.init = (params,cb)->
 
 module.exports.myKewords = ()->
 	debug "call myKewords"
+	a = ()->
+		console.log arguments
+	zk.getChildren "/keywords",a, (err, keywords, zstat)->
+		console.log arguments
 	return ["bieber","whereismike"]
 module.exports.trackKeyword = (keyword)->
 	debug "trackKeyword", arguments

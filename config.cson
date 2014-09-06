@@ -6,5 +6,6 @@ twitter:
 zookeeper:
 	hosts: ["192.168.218.53:2181"]
 	root: "/wordcloud"
+	autoResetWatches: false
 kafka:
 	zookeeper: "192.168.218.53:2181/kafka0.8"
