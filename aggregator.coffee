@@ -13,11 +13,10 @@ setInterval ->
 	sorted = Object.keys counts
 	sorted.sort (a, b) -> counts[b] - counts[a]
 	return unless sorted.length
-	o = {}
-	for i in sorted[0..50]
-		o[i] = counts[i]
+	o = (key: i, value: counts[i] for i in sorted[0..50])
 	kafkaProducer.send [topic: "jebka", messages: [JSON.stringify o]], (e) ->
 		console.error e if e
+		delete counts[i] for i in sorted[250..] if sorted.length > 500
 , 2000
 
 processMessage = (message) ->
