@@ -45,25 +45,39 @@ module.exports.myKeywords = (cb)->
 
 refreshKeywords = (cb)->
 	debug "refreshing keywords"
+	x = []
 	zk.getChildren "/keywords",updateKeywords, (err, keywords, zstat)->
-		x = []
-		y = {}
-		for k in keywords
-			x.push k
-			if actualKeywords[k]
-				delete actualKeywords[k]
-			else
-				trackKeyword k
-				y[k] = yes
+		async.eachLimit keywords, 10, (keyword, next)->
+			debug "getting data for keyword #{keyword}"
+			zk.get "/keywords/#{keyword}", null, (err, value, zstat)->
+				return next err if err
+				try
+					d = JSON.parse value.toString()
+				catch e
+					return next e
+				for i in d.keywords
+					x.push i
+				next()
+		,(err)->
+			return cb err if err
+			y = {}
+			for k in keywords
+				x.push k
+				if actualKeywords[k]
+					delete actualKeywords[k]
+				else
+					trackKeyword k
+					y[k] = yes
 
-		for k of actualKeywords
-			untrackKeyword k
-		actualKeywords = y
+			for k of actualKeywords
+				untrackKeyword k
+			actualKeywords = y
 
-		return cb(null,x)
+			return cb(null,x)
 
 
 updateKeywords = (info)->
+	console.log arguments
 	if info.path is "/keywords" and info.type is "child"
 		refreshKeywords (err, k)->
 			debug "keywords refreshed",k
