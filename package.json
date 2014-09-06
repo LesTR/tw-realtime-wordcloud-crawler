@@ -19,6 +19,7 @@
   "dependencies": {
     "colors": "^0.6.2",
     "cson-config": "^0.1.9",
+    "kafka-node": "^0.2.8",
     "node-tweet-stream": "^1.4.0",
     "prozess": "^0.7.2"
   }
