@@ -12,16 +12,23 @@ zk.on 'expired', ()->
 	zk.start()
 
 
-
 module.exports.createKeywordPath = (keyword, next) ->
-
 	path = "keywords/" + keyword
 	zk.mkdirp path, (err) ->
 		return next err if err
-		console.log "Path created"
+		next()
+
+
+module.exports.deleteKeywordPath = (keyword, next) ->
+	path = "keywords/" + keyword
+	zk.del path, -1, (err) ->
+		return next err if err and err != -101 # node didn't exists/allready deleted
+		next()
+
 
 
 # usage
-#module.exports.createKeywordPath "foobar12"
+#module.exports.createKeywordPath "foobar", () ->
+#module.exports.deleteKeywordPath "foobar", () ->
 
 
