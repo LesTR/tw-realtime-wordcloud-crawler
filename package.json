@@ -25,6 +25,7 @@
     "kafka-node": "^0.2.8",
     "node-tweet-stream": "^1.4.0",
     "prozess": "^0.7.2",
-    "zkjs": "^3.4.1"
+    "zkjs": "^3.4.1",
+    "moment": "~2.8.3"
   }
 }

@@ -4,6 +4,7 @@ async = require 'async'
 kafka = require 'kafka-node'
 colors = require 'colors'
 Twitter = require 'node-tweet-stream'
+moment = require 'moment'
 
 initialized = no
 zk = null
@@ -56,7 +57,9 @@ refreshKeywords = (cb)->
 					d = JSON.parse value.toString()
 				catch e
 					return next e
+				d.mtime = moment(zstat.ctime).unix()
 				x[d.topic] = d
+
 				next()
 		,(err)->
 			return cb err if err
@@ -108,8 +111,6 @@ trackKeyword = (keywordStructure)->
 				entities: tweet.entities
 				timestamp: tweet.timestamp_ms
 				source: tweet.source
-				topicLastUpdate: s.lastUpdate
-
 			publishTweet keywordStructure, t, ()->
 
 		allStreams[keywordStructure.topic] = s
@@ -117,8 +118,10 @@ trackKeyword = (keywordStructure)->
 		s = allStreams[keywordStructure.topic]
 
 	for k in s.keywords
+		debug "untrack #{k}"
 		s.untrack k
 	for k in keywordStructure.keywords
+		debug "track #{k}"
 		s.track k
 
 untrackKeyword = (stream)->
@@ -132,12 +135,13 @@ untrackKeyword = (stream)->
 
 publishTweet = (keywordStructure, tweet, cb)->
 
-	debug "publishTweet for topic #{keywordStructure.topic} with id: #{tweet.id}"
+	#debug "publishTweet for topic #{keywordStructure.topic} with id: #{tweet.id}"
 	m =
 		id: 8
 		topic: keywordStructure.topic
 		keywords: keywordStructure.keywords
 		tweet: tweet
+		topicLastUpdate: keywordStructure.mtime
 	message = JSON.stringify m
 	kafkaProducer.send [
 		{topic: "aggregator", messages:[message], partition: 0}
