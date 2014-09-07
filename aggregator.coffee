@@ -30,7 +30,7 @@ processMessage = (message) ->
 	try
 		decoded = JSON.parse message.value
 		words = decoded.tweet.text.split(" ").filter (v) ->
-			v.length > 2 and v not of stopwords
+			v.length > 2 and v not of stopwords and not v.match /(http|[&\/])/
 		counts[decoded.topic] ?= {}
 		total[decoded.topic] ?= 0
 		total[decoded.topic]++
