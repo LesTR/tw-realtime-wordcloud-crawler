@@ -9,6 +9,7 @@ stopwords[i] = yes for i in require "./stopwords.json"
 
 counts = {}
 total = {}
+keywords = {}
 
 setInterval ->
 	for topic, items of counts
@@ -18,11 +19,12 @@ setInterval ->
 			return unless sorted.length
 			o =
 				total: total[topic]
+				keywords: keywords[topic]
 				counts: (key: i, value: items[i] for i in sorted[0..50])
 			kafkaProducer.send [topic: topic, messages: [JSON.stringify o]], (e) ->
 				console.error e if e
 				delete items[i] for i in sorted[250..] if sorted.length > 500
-, 1000
+, 5000
 
 processMessage = (message) ->
 	try
@@ -32,6 +34,7 @@ processMessage = (message) ->
 		counts[decoded.topic] ?= {}
 		total[decoded.topic] ?= 0
 		total[decoded.topic]++
+		keywords[decoded.topic] = decoded.keywords
 		for word in words
 			word = word.toLowerCase().replace(/[,;:!.})(=-]/ig, "").trim()
 			if word.length > 2 and word not in decoded.keywords
