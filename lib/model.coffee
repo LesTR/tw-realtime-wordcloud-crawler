@@ -62,10 +62,11 @@ refreshKeywords = (cb)->
 			return cb err if err
 			running = []
 			for topic,s of x
-				if allStreams[s.topic]
-					running.push s.topic
-				else
-					trackKeyword s
+				#if allStreams[s.topic]
+				#	running.push s.topic
+				#else
+					#trackKeyword s
+				trackKeyword s
 
 			return cb(null,x)
 
@@ -79,36 +80,46 @@ updateKeywords = (info)->
 
 
 trackKeyword = (keywordStructure)->
-	debug "trackKeyword #{keywordStructure.topic}"
+	debug "track topic #{keywordStructure.topic}"
 	c =
 		consumer_key: config.twitter.consumer_key
 		consumer_secret: config.twitter.consumer_secret
 		token: keywordStructure.token
 		token_secret: keywordStructure.secret
 
-	s = new Twitter c
+	unless allStreams[keywordStructure.topic]
+		s = new Twitter c
+		s.keywords = keywordStructure.keywords
+		s.topic = keywordStructure.topic
+		s.lastUpdate = new Date().getTime()
 
-	s.on 'error', (error)->
-		console.log "TW error pYco".red, error
+		s.on 'error', (error)->
+			console.log "TW error pYco".red, error
 
-	s.on 'tweet', (tweet)->
-		t =
-			id: tweet.id_str
-			text: tweet.text
-			user:
-				id: tweet.user.id_str
-				description: tweet.user.description
-				screenname: tweet.user.screen_name
-			lang: tweet.lang
-			entities: tweet.entities
-			timestamp: tweet.timestamp_ms
-			source: tweet.source
+		s.on 'tweet', (tweet)->
+			t =
+				id: tweet.id_str
+				text: tweet.text
+				user:
+					id: tweet.user.id_str
+					description: tweet.user.description
+					screenname: tweet.user.screen_name
+				lang: tweet.lang
+				entities: tweet.entities
+				timestamp: tweet.timestamp_ms
+				source: tweet.source
+				topicLastUpdate: s.lastUpdate
 
-		publishTweet keywordStructure, t, ()->
+			publishTweet keywordStructure, t, ()->
 
+		allStreams[keywordStructure.topic] = s
+	else
+		s = allStreams[keywordStructure.topic]
+
+	for k in s.keywords
+		s.untrack k
 	for k in keywordStructure.keywords
 		s.track k
-	allStreams[keywordStructure.topic] = s
 
 untrackKeyword = (stream)->
 	debug "untrackKeyword #{stream.topic}"
