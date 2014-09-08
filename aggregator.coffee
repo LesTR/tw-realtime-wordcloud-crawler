@@ -54,7 +54,7 @@ processMessage = (message) ->
 			.split " "
 			.map (v) -> iconv.convert(v).toString()
 			.filter (v) -> v.length > 2 and v not of stopwords and not v.match /(http|[&\/])/
-		total[decoded.topic]++
+		total++
 		keywords ?= decoded.keywords
 		for word in words
 			word = word.toLowerCase().replace(/[,;:!.})(=-]/ig, "").trim()
