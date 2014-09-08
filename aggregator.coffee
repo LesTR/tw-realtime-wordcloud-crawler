@@ -3,6 +3,7 @@ kafka = require "kafka-node"
 kafkaClient = new kafka.Client config.kafka.zookeeper
 kafkaConsumer = new kafka.Consumer kafkaClient, [topic: "aggregator"]
 kafkaProducer = new kafka.Producer kafkaClient
+fs = require "fs"
 
 {Iconv} = require "iconv"
 iconv = new Iconv "UTF-8", "ASCII//IGNORE"
