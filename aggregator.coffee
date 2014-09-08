@@ -39,12 +39,13 @@ setInterval ->
 		messages: [JSON.stringify o]
 	], (e) ->
 		console.log "kafka:", e if e
-		fs.writeFile "./aggregator.json", JSON.stringify(counts), console.error
+		console.log "commit", total
+		fs.writeFile "./aggregator.json", JSON.stringify(counts), (e) ->
+			console.log e if e
 		delete counts[i] for i in sorted[250..] if sorted.length > 500
 , 5000
 
 processMessage = (message) ->
-	console.log "."
 	try
 		decoded = JSON.parse message.value
 		words = decoded
