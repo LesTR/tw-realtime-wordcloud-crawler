@@ -4,8 +4,10 @@ twitter:
 	tokens: [
 		{token: "1651168194-L2i9M5XjpS8MP6jsasAWIdZmF9KHQsf5Tflx0Gz", token_secret: "HTgUWCKvVa4X39kX3i2BkBBZyqsDGyGyAjx9CNd5rbn96"},
 		{token: "194596640-uneWfyjyQdZUNJueHGlFZY6aqkc8bGZ3drI3cyru", token_secret: "feQ2fK0xV76V0x6Du6hr4LdX6Vte0WftZhh1qrMizRofC"},
-		{token: "52355459-icNwDrv38ePgShSRLkoDv6mqlQr1j1EUJ49OZAVFq", token_secret: "Wpw5xcdq73PS4RmINN60A1USuBgxzDA4PsImnWJ6wRjLH"}
+		{token: "52355459-icNwDrv38ePgShSRLkoDv6mqlQr1j1EUJ49OZAVFq", token_secret: "Wpw5xcdq73PS4RmINN60A1USuBgxzDA4PsImnWJ6wRjLH"},
+		{token: "363831034-uh9EE7R13cpk6NCO0oUfm1ErKeXM7NjW2AzdR49U", token_secret: "GJnkZY01oI8vBdK9nPEh5FAw5G8oXdiytVm1nKtWsQwIw"},
+		{token: "149662004-p7YHv8lLGf91qlTc6DHSPWOxXPq0amnEiTtWdx95", token_secret: "YN2KgsDzneYnRV8GIq2BLh9M1wldgnXycEl3JRud3Tivp"}
 	]
 kafka:
 	zookeeper: "wc01.us-w2.aws.ccl:2181/kafka0.8"
-keywords: ["apple"]
+keywords: ["iphone"]
