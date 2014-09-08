@@ -12,7 +12,7 @@ stopwords = {}
 stopwords[i] = yes for i in require "./stopwords.json"
 
 try
-	data = JSON.parse fs.readFile "./data.json"
+	data = JSON.parse fs.readFileSync "./aggregator.json"
 	counts = data.counts
 	total = data.total
 catch
@@ -39,7 +39,6 @@ setInterval ->
 		messages: [JSON.stringify o]
 	], (e) ->
 		console.log "kafka:", e if e
-		console.log "commit", total
 		fs.writeFile "./aggregator.json", JSON.stringify({counts, total}), (e) ->
 			console.log e if e
 		delete counts[i] for i in sorted[250..] if sorted.length > 500
