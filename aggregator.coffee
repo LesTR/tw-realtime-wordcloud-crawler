@@ -19,7 +19,7 @@ catch
 	counts = {}
 	total = 0
 
-keywords = []
+keywords = null
 
 setInterval ->
 	o = {total}
