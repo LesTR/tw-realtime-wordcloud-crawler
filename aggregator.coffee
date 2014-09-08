@@ -42,7 +42,7 @@ setInterval ->
 			console.log e if e
 		if sorted.length > 1000
 			delete counts[i] for i in sorted[250..]
-			counts[i] = 250 - i for i in sorted[0..250]
+			counts[i] = 250 - i * 10 for i in sorted[0..250]
 , 5000
 
 processMessage = (message) ->
