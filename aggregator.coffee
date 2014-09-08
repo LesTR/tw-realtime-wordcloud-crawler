@@ -10,8 +10,14 @@ iconv = new Iconv "UTF-8", "ASCII//IGNORE"
 stopwords = {}
 stopwords[i] = yes for i in require "./stopwords.json"
 
-counts = {}
-total = 0
+try
+	counts = JSON.parse fs.readFile "./data.json"
+	total = Object.keys(counts).length
+	console.log counts, total
+catch
+	counts = {}
+	total = 0
+
 keywords = []
 
 setInterval ->
@@ -34,6 +40,7 @@ setInterval ->
 		messages: [JSON.stringify o]
 	], (e) ->
 		console.log "kafka:", e if e
+		fs.write "./aggregator.json", JSON.stringify counts
 		delete counts[i] for i in sorted[250..] if sorted.length > 500
 , 5000
 
