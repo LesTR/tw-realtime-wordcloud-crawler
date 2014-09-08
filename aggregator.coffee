@@ -57,7 +57,7 @@ processMessage = (message) ->
 		total++
 		keywords ?= decoded.keywords
 		for word in words
-			word = word.toLowerCase().replace(/[,;:!.})(=-?]/ig, "").trim()
+			word = word.toLowerCase().replace(/[,;:!.})(=-?"]/ig, "").trim()
 			if word.length > 2 and word not in decoded.keywords
 				counts[word] ?= 0
 				counts[word]++
