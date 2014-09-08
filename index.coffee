@@ -52,7 +52,7 @@ publishTweet = (keywords, tweet)->
 		tweet: tweet
 	message = JSON.stringify m
 	kafkaProducer.send [
-		{topic: "aggregator", messages:[message], partition: 0}
+		{topic: "aggregator", messages:[message], partition: 0, offset: tweet.id}
 	],(err, data)->
 		console.log arguments
 
