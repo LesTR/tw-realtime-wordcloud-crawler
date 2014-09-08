@@ -6,4 +6,4 @@ twitter:
 	]
 kafka:
 	zookeeper: "wc01.us-w2.aws.ccl:2181/kafka0.8"
-keywords: ["media"]
+keywords: ["apple"]
