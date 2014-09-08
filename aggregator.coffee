@@ -22,7 +22,7 @@ catch
 keywords = null
 
 setInterval ->
-	o = {total}
+	o = {keywords, total}
 	kafkaProducer.send [topic: "keynote", messages: [JSON.stringify o]], (e) ->
 		console.log "kafka:", e if e
 , 200
@@ -32,7 +32,6 @@ setInterval ->
 	sorted.sort (a, b) -> counts[b] - counts[a]
 	return unless sorted.length
 	o =
-		keywords: keywords
 		counts: (key: i, value: counts[i] for i in sorted[0..50])
 	kafkaProducer.send [
 		topic: "keynote"
