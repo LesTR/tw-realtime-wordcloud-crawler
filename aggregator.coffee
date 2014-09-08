@@ -39,7 +39,7 @@ setInterval ->
 		messages: [JSON.stringify o]
 	], (e) ->
 		console.log "kafka:", e if e
-		fs.write "./aggregator.json", JSON.stringify counts
+		fs.writeFile "./aggregator.json", JSON.stringify(counts), console.error
 		delete counts[i] for i in sorted[250..] if sorted.length > 500
 , 5000
 
