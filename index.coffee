@@ -54,7 +54,7 @@ publishTweet = (keywords, tweet)->
 	kafkaProducer.send [
 		{topic: "aggregator", messages:[message], partition: 0}
 	],(err, data)->
-		console.log err.red if err
+		console.log arguments
 
 
 #model = require './lib/model'

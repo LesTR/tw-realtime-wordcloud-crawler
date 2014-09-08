@@ -2,7 +2,7 @@ config = require("cson-config").load()
 kafka = require "kafka-node"
 kafkaClient = new kafka.Client config.kafka.zookeeper
 kafkaConsumer = new kafka.Consumer kafkaClient, [topic: "aggregator"]
-kafkaProducer= new kafka.Producer kafkaClient
+kafkaProducer = new kafka.Producer kafkaClient
 
 {Iconv} = require "iconv"
 iconv = new Iconv "UTF-8", "ASCII//IGNORE"
@@ -21,11 +21,9 @@ catch
 keywords = []
 
 setInterval ->
-	for topic, num of total
-		o =
-			total: num
-		kafkaProducer.send [topic: topic, messages: [JSON.stringify o]], (e) ->
-			console.log "kafka:", e if e
+	o = {total}
+	kafkaProducer.send [topic: "keynote", messages: [JSON.stringify o]], (e) ->
+		console.log "kafka:", e if e
 , 200
 
 setInterval ->
@@ -33,10 +31,10 @@ setInterval ->
 	sorted.sort (a, b) -> counts[b] - counts[a]
 	return unless sorted.length
 	o =
-		keywords: keywords[topic]
+		keywords: keywords
 		counts: (key: i, value: counts[i] for i in sorted[0..50])
 	kafkaProducer.send [
-		topic: topic
+		topic: "keynote"
 		messages: [JSON.stringify o]
 	], (e) ->
 		console.log "kafka:", e if e
@@ -45,6 +43,7 @@ setInterval ->
 , 5000
 
 processMessage = (message) ->
+	console.log "."
 	try
 		decoded = JSON.parse message.value
 		words = decoded
@@ -63,5 +62,6 @@ processMessage = (message) ->
 	catch e
 		console.error e
 
-kafkaConsumer.on "e", console.error
+kafkaConsumer.on "error", console.error
+kafkaProducer.on "error", console.error
 kafkaConsumer.on "message", processMessage
