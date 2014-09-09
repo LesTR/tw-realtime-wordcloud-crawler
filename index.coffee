@@ -11,6 +11,21 @@ kafkaProducer = new kafka.Producer kafkaClient
 kafkaProducer.on 'error', (err)->
 	console.log "Kafka ERROR pYco: ".red, err
 
+
+
+
+
+# reboot after 8 sec without published tweets
+tweetCounter = 0
+tweetCounterBefore = 0
+setInterval () ->
+	if tweetCounter is tweetCounterBefore
+		process.exit -1
+	tweetCounterBefore = tweetCounter
+
+, 8000
+
+
 kafkaProducer.on 'ready', ()->
 	debug "Kafka producer ready"
 	for t in config.twitter.tokens
@@ -55,6 +70,7 @@ publishTweet = (keywords, tweet)->
 		{topic: "aggregator", messages:[message], partition: 0, offset: tweet.id}
 	],(err, data)->
 		console.log arguments
+		tweetCounter++
 
 
 #model = require './lib/model'
