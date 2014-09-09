@@ -57,16 +57,13 @@ processMessage = (message) ->
 			.text
 			.toLowerCase()
 			.split " "
-			.map (v) ->
-				iconv.convert(
-					v.replace(/[,;!.})(=-?"]/ig, "").trim()
-				).toString()
 			.filter (v) ->
-				v.length > 2 and
-				v not of stopwords and
-				not v.match /(http|[&\/])/ and
-				not v.match /^\d+$/
-				v not in keywords
+				not v.match /(http|[&\/])/
+			.map (v) ->
+				iconv.convert(v.trim()).toString().replace /[,;!.})(=-?"]/ig, ""
+			.filter (v) ->
+				v.length > 2 and v not of stopwords and v not in keywords not v.match /^\d+$/
+
 		total++
 		for word in words
 			counts[word] ?= 0
