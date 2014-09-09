@@ -56,9 +56,11 @@ processMessage = (message) ->
 			.tweet
 			.text
 			.toLowerCase()
-			.replace /[,;:!.})(=-?"]/ig, " "
 			.split " "
-			.map (v) -> iconv.convert(v.trim()).toString()
+			.map (v) ->
+				iconv.convert(
+					v.replace(/[,;!.})(=-?"]/ig, "").trim()
+				).toString()
 			.filter (v) ->
 				v.length > 2 and
 				v not of stopwords and
