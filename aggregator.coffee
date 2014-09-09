@@ -38,15 +38,14 @@ setInterval ->
 		messages: [JSON.stringify o]
 	], (e) ->
 		console.log "kafka:", e if e
-		fs.writeFile "./aggregator.json", JSON.stringify({counts, total}), (e) ->
-			console.log e if e
 		if sorted.length > 1000
 			for word, index in sorted
-				console.log index
 				if index < 250
 					counts[word] = (250 - index) * 10
 				else
 					delete counts[word]
+		fs.writeFile "./aggregator.json", JSON.stringify({counts, total}), (e) ->
+			console.log e if e
 , 5000
 
 processMessage = (message) ->
