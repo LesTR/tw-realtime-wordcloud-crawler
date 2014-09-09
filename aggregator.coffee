@@ -51,19 +51,24 @@ setInterval ->
 processMessage = (message) ->
 	try
 		decoded = JSON.parse message.value
+		keywords ?= decoded.keywords
 		words = decoded
 			.tweet
 			.text
+			.toLowerCase()
+			.replace /[,;:!.})(=-?"]/ig, " "
 			.split " "
-			.map (v) -> iconv.convert(v).toString()
-			.filter (v) -> v.length > 2 and v not of stopwords and not v.match /(http|[&\/])/
+			.map (v) -> iconv.convert(v.trim()).toString()
+			.filter (v) ->
+				v.length > 2 and
+				v not of stopwords and
+				not v.match /(http|[&\/])/ and
+				not v.match /^\d+$/
+				v not in keywords
 		total++
-		keywords ?= decoded.keywords
 		for word in words
-			word = word.toLowerCase().replace(/[,;:!.})(=-?"]/ig, "").trim()
-			if word.length > 2 and word not in decoded.keywords
-				counts[word] ?= 0
-				counts[word]++
+			counts[word] ?= 0
+			counts[word]++
 	catch e
 		console.error e
 
