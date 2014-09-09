@@ -58,6 +58,7 @@ processMessage = (message) ->
 			.toLowerCase()
 			.replace /,/g, " "
 			.split " "
+
 			.filter (v) ->
 				not v.match /(http|[&\/])/
 			.filter (v) ->
@@ -67,7 +68,7 @@ processMessage = (message) ->
 			.map (v) ->
 				iconv.convert(v.trim()).toString().replace /[:,;!.})(=-?"]/ig, ""
 			.filter (v) ->
-				v.length > 2 and v not in keywords
+				v.length > 2 and v not in stopwords
 		total++
 		for word in words
 			counts[word] ?= 0
