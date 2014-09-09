@@ -41,7 +41,7 @@ setInterval ->
 		if sorted.length > 1000
 			for word, index in sorted
 				if index < 250
-					counts[word] = counts[word] * 0.1
+					counts[word] = Math.ceil(counts[word] * 0.1)
 				else
 					delete counts[word]
 		fs.writeFile "./aggregator.json", JSON.stringify({counts, total}), (e) ->
