@@ -67,7 +67,7 @@ processMessage = (message) ->
 			.map (v) ->
 				iconv.convert(v.trim()).toString().replace /[:,;!.})(=-?"]/ig, ""
 			.filter (v) ->
-				v.length > 2 and v not of stopwords and v not in keywords and not v.match /^\d+$/
+				v.length > 2 and v not in keywords
 		total++
 		for word in words
 			counts[word] ?= 0
