@@ -60,6 +60,8 @@ processMessage = (message) ->
 			.split " "
 			.filter (v) ->
 				not v.match /(http|[&\/])/
+			.filter (v) ->
+				not v.match /^-?[0-9]+$/
 			.map (v) ->
 				iconv.convert(v.trim()).toString().replace /[:,;!.})(=-?"]/ig, ""
 			.filter (v) ->
