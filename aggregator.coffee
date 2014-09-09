@@ -41,8 +41,12 @@ setInterval ->
 		fs.writeFile "./aggregator.json", JSON.stringify({counts, total}), (e) ->
 			console.log e if e
 		if sorted.length > 1000
-			delete counts[i] for i in sorted[250..]
-			counts[i] = 250 - i * 10 for i in sorted[0..250]
+			for word, index in sorted
+				console.log index
+				if index < 250
+					counts[word] = (250 - index) * 10
+				else
+					delete counts[word]
 , 5000
 
 processMessage = (message) ->
