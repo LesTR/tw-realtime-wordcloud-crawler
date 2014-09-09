@@ -50,24 +50,24 @@ setInterval ->
 
 processMessage = (message) ->
 	try
-		decoded = JSON.parse message.value
-		keywords ?= decoded.keywords
-		words = decoded
-			.tweet
-			.text
-			.toLowerCase()
-			.replace /,/g, " "
-			.split " "
-			.filter (v) ->
-				not v.match /(http|[&\/])/
-			.map (v) ->
-				iconv.convert(v.trim()).toString().replace /[:,;!.})(=-?"]/ig, ""
-			.filter (v) ->
-				v.length > 2 and v not of stopwords and v not in keywords and not v.match /^\d+$/
-		total++
-		for word in words
-			counts[word] ?= 0
-			counts[word]++
+	decoded = JSON.parse message.value
+	keywords ?= decoded.keywords
+	words = decoded
+		.tweet
+		.text
+		.toLowerCase()
+		.replace /,/g, " "
+		.split " "
+		.filter (v) ->
+			not v.match /(http|[&\/])/
+		.map (v) ->
+			iconv.convert(v.trim()).toString().replace /[:,;!.})(=-?"]/ig, ""
+		.filter (v) ->
+			v.length > 2 and v not of stopwords and v not in keywords and not v.match /^\d+$/
+	total++
+	for word in words
+		counts[word] ?= 0
+		counts[word]++
 	catch e
 		console.error e
 
